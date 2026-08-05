@@ -3,7 +3,7 @@ name: Actualizar dashboard Mendel
 on:
   schedule:
     # Corre todos los días a las 07:00 UTC (≈ 01:00 hora Ciudad de México, ajustar si querés otro horario)
-    - cron: "0 7 * * *"
+    - cron: "0 12 * * *"
   workflow_dispatch: {}   # permite tocar "Run workflow" manualmente desde GitHub
 
 permissions:
