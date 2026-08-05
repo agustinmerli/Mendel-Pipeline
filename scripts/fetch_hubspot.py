@@ -157,10 +157,18 @@ def fetch_primary_contact_title(deal_id):
         return None
 
 
-def ms_to_date(ms):
-    if not ms:
+def ms_to_date(value):
+    if value is None or value == '':
         return None
-    return datetime.fromtimestamp(int(ms) / 1000, tz=timezone.utc)
+    try:
+        return datetime.fromtimestamp(int(value) / 1000, tz=timezone.utc)
+    except (ValueError, TypeError):
+        pass
+    try:
+        s = str(value).replace('Z', '+00:00')
+        return datetime.fromisoformat(s)
+    except (ValueError, TypeError):
+        return None
 
 
 def current_quarter_bounds(now):
