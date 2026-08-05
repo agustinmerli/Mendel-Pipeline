@@ -246,6 +246,14 @@ const DM_LABELS = {decisor:"Contacto decisor", influencer:"Influenciador", opera
 const STAGE_ORDER = ["Discovery","Qualified","Negotiation","Risk Analysis & Documentation","Internal validation"];
 const VERBAL_WIN_STAGE_IDS = new Set(["13516852","13510790","1335049772","1335049773"]); // Risk Analysis & Internal Validation (MX Sales + MX Viajes)
 
+// Seguridad extra: si por cualquier motivo llegara un deal en Lost o Nurturing a deals.json,
+// nunca debe contarse en el Forecast del Q (aunque hoy fetch_hubspot.py ya los filtra en el origen).
+const FORECAST_EXCLUDED_STAGE_KEYWORDS = ["lost", "nurtur"];
+function isForecastEligible(d){
+  const s = (d.stage||"").toLowerCase();
+  return !FORECAST_EXCLUDED_STAGE_KEYWORDS.some(k=>s.includes(k));
+}
+
 // Estos se calculan en tiempo real al cargar la página (ver initDashboard), no quedan fijos en el código.
 let CURRENT_QUARTER_END = "";  // último mes del Q actual, formato "YYYY-MM"
 let CURRENT_Q = "";            // formato "YYYY-Q#"
@@ -473,7 +481,7 @@ function quarterLabel(qKey){
   return `Q${q} ${y}`;
 }
 function renderForecast(){
-  const list = filteredDeals();
+  const list = filteredDeals().filter(isForecastEligible);
   const byQ = {};
   list.forEach(d=>{
     if(!d.expectedCloseMonth) return;
